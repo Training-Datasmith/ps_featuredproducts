@@ -257,7 +257,7 @@ class Ps_FeaturedProducts extends Module implements WidgetInterface
         if (!empty($products)) {
             return [
                 'products' => $products,
-                'allProductsLink' => Context::getContext()->link->getCategoryLink($this->getConfigFieldsValues()['HOME_FEATURED_CAT']),
+                'allProductsLink' => Context::getContext()->link->getCategoryLink((int) Configuration::get('HOME_FEATURED_CAT')),
             ];
         }
 
