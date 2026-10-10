@@ -1,4 +1,5 @@
 /config_*.xml
 /translations/*.php
 /vendor/
-/.php_cs.cachetests/.runtime/
+/.php_cs.cache
+tests/.runtime/
