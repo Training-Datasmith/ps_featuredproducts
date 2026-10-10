@@ -112,7 +112,7 @@ namespace PrestaShop\PrestaShop\Adapter\Category;
 class CategoryProductSearchProvider
 {
     public static $lastQuery;
-    public static $productsToReturn = array(array('id_product' => 1));
+    public static $productsToReturn = [['id_product' => 1]];
 
     public function __construct($translator, $category)
     {
@@ -121,7 +121,7 @@ class CategoryProductSearchProvider
     public static function reset()
     {
         self::$lastQuery = null;
-        self::$productsToReturn = array(array('id_product' => 1));
+        self::$productsToReturn = [['id_product' => 1]];
     }
 
     public function runQuery($context, $query)
@@ -165,7 +165,7 @@ class ProductListingPresenter
     {
         ++self::$presentCount;
 
-        return array('id' => isset($product['id_product']) ? $product['id_product'] : 0);
+        return ['id' => isset($product['id_product']) ? $product['id_product'] : 0];
     }
 }
 
@@ -183,6 +183,6 @@ class ProductListingPresenter
     {
         ++self::$presentCount;
 
-        return array('id' => isset($product['id_product']) ? $product['id_product'] : 0);
+        return ['id' => isset($product['id_product']) ? $product['id_product'] : 0];
     }
 }

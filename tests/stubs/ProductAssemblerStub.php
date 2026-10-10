@@ -20,7 +20,7 @@ class ProductPresenterFactory
 
     public function getPresentationSettings()
     {
-        return array();
+        return [];
     }
 }
 

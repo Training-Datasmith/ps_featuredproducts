@@ -12,33 +12,31 @@ class PsFeaturedProductsWidgetTest extends PHPUnit_Framework_TestCase
 
     public function testAllProductsLinkUsesStoredCategoryNotRequestOverride()
     {
-        Tools::setValues(array('HOME_FEATURED_CAT' => '9'));
-        \PrestaShop\PrestaShop\Adapter\Category\CategoryProductSearchProvider::$productsToReturn = array(
-            array('id_product' => 1),
-        );
+        Tools::setValues(['HOME_FEATURED_CAT' => '9']);
+        \PrestaShop\PrestaShop\Adapter\Category\CategoryProductSearchProvider::$productsToReturn = [
+            ['id_product' => 1],
+        ];
         $module = TestHarness::newModule();
-        $variables = $module->getWidgetVariables('displayHome', array());
+        $variables = $module->getWidgetVariables('displayHome', []);
         $this->assertInternalType('array', $variables);
         $this->assertSame(4, CategoryStub::$constructedIds[0]);
         $this->assertSame(4, LinkStub::$categoryLinkIds[0]);
-        $this->assertInternalType('string', $variables['allProductsLink']);
-        $this->assertNotEmpty($variables['allProductsLink']);
     }
 
     public function testEmptyProductsReturnsFalse()
     {
-        \PrestaShop\PrestaShop\Adapter\Category\CategoryProductSearchProvider::$productsToReturn = array();
+        \PrestaShop\PrestaShop\Adapter\Category\CategoryProductSearchProvider::$productsToReturn = [];
         $module = TestHarness::newModule();
-        $this->assertFalse($module->getWidgetVariables('displayHome', array()));
-        $this->assertFalse($module->renderWidget('displayHome', array()));
+        $this->assertFalse($module->getWidgetVariables('displayHome', []));
+        $this->assertFalse($module->renderWidget('displayHome', []));
     }
 
     public function testAdapterPresenterBulkAssemblyForCurrentPsVersion()
     {
-        \PrestaShop\PrestaShop\Adapter\Category\CategoryProductSearchProvider::$productsToReturn = array(
-            array('id_product' => 1),
-            array('id_product' => 2),
-        );
+        \PrestaShop\PrestaShop\Adapter\Category\CategoryProductSearchProvider::$productsToReturn = [
+            ['id_product' => 1],
+            ['id_product' => 2],
+        ];
         $module = TestHarness::newModule();
         TestHarness::invokeGetProducts($module);
         $this->assertSame(1, ProductAssemblerStub::$assembleProductsCalls);

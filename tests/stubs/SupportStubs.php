@@ -12,11 +12,11 @@ class ShopStub
 
 class LinkStub
 {
-    public static $categoryLinkIds = array();
+    public static $categoryLinkIds = [];
 
     public static function reset()
     {
-        self::$categoryLinkIds = array();
+        self::$categoryLinkIds = [];
     }
 
     public function getCategoryLink($id)
@@ -46,7 +46,7 @@ class ControllerStub
 {
     public function getLanguages()
     {
-        return array();
+        return [];
     }
 }
 
@@ -56,7 +56,7 @@ class TranslatorStub
 
 class SmartyStub
 {
-    public $assigned = array();
+    public $assigned = [];
 
     public function assign($vars)
     {
@@ -121,11 +121,11 @@ class HelperForm extends HelperFormStub
 
 class CategoryStub
 {
-    public static $constructedIds = array();
+    public static $constructedIds = [];
 
     public static function reset()
     {
-        self::$constructedIds = array();
+        self::$constructedIds = [];
     }
 }
 

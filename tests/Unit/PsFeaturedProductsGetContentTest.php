@@ -5,7 +5,7 @@ class PsFeaturedProductsGetContentTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         TestHarness::reset();
-        Configuration::updateValue('HOME_FEATURED_NBR', 8);
+        Configuration::updateValue('HOME_FEATURED_NBR', 7);
         Configuration::updateValue('HOME_FEATURED_CAT', 5);
         Configuration::updateValue('HOME_FEATURED_RANDOMIZE', false);
     }
@@ -16,7 +16,7 @@ class PsFeaturedProductsGetContentTest extends PHPUnit_Framework_TestCase
         $output = $module->getContent();
         $this->assertNotContains('ERROR:', $output);
         $this->assertNotContains('OK:', $output);
-        $this->assertSame(8, Configuration::get('HOME_FEATURED_NBR'));
+        $this->assertSame(7, Configuration::get('HOME_FEATURED_NBR'));
         $this->assertSame(5, Configuration::get('HOME_FEATURED_CAT'));
         $this->assertSame(false, Configuration::get('HOME_FEATURED_RANDOMIZE'));
     }
@@ -26,26 +26,26 @@ class PsFeaturedProductsGetContentTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidProductCountIsRejected($count)
     {
-        Tools::setValues(array(
+        Tools::setValues([
             'submitHomeFeatured' => '1',
             'HOME_FEATURED_NBR' => $count,
             'HOME_FEATURED_CAT' => '6',
             'HOME_FEATURED_RANDOMIZE' => '0',
-        ));
+        ]);
         $module = TestHarness::newModule();
         $output = $module->getContent();
         $this->assertContains('ERROR:', $output);
-        $this->assertSame(8, Configuration::get('HOME_FEATURED_NBR'));
+        $this->assertSame(7, Configuration::get('HOME_FEATURED_NBR'));
     }
 
     public function testInvalidCategoryIsRejected()
     {
-        Tools::setValues(array(
+        Tools::setValues([
             'submitHomeFeatured' => '1',
             'HOME_FEATURED_NBR' => '4',
             'HOME_FEATURED_CAT' => '0',
             'HOME_FEATURED_RANDOMIZE' => '0',
-        ));
+        ]);
         $module = TestHarness::newModule();
         $output = $module->getContent();
         $this->assertContains('ERROR:', $output);
@@ -54,12 +54,12 @@ class PsFeaturedProductsGetContentTest extends PHPUnit_Framework_TestCase
 
     public function testInvalidRandomizeFlagIsRejected()
     {
-        Tools::setValues(array(
+        Tools::setValues([
             'submitHomeFeatured' => '1',
             'HOME_FEATURED_NBR' => '4',
             'HOME_FEATURED_CAT' => '6',
             'HOME_FEATURED_RANDOMIZE' => 'yes',
-        ));
+        ]);
         $module = TestHarness::newModule();
         $output = $module->getContent();
         $this->assertContains('ERROR:', $output);
@@ -68,12 +68,12 @@ class PsFeaturedProductsGetContentTest extends PHPUnit_Framework_TestCase
 
     public function testValidSubmitPersistsCastConfigurationValues()
     {
-        Tools::setValues(array(
+        Tools::setValues([
             'submitHomeFeatured' => '1',
             'HOME_FEATURED_NBR' => '4',
             'HOME_FEATURED_CAT' => '6',
             'HOME_FEATURED_RANDOMIZE' => '1',
-        ));
+        ]);
         $module = TestHarness::newModule();
         $output = $module->getContent();
         $this->assertContains('OK:', $output);
@@ -100,11 +100,11 @@ class PsFeaturedProductsGetContentTest extends PHPUnit_Framework_TestCase
 
     public function invalidCountProvider()
     {
-        return array(
-            array('08'),
-            array('4.2'),
-            array('0'),
-            array('-3'),
-        );
+        return [
+            ['08'],
+            ['4.2'],
+            ['0'],
+            ['-3'],
+        ];
     }
 }

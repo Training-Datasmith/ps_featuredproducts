@@ -2,4 +2,3 @@
 /translations/*.php
 /vendor/
 /.php_cs.cache
-tests/.runtime/

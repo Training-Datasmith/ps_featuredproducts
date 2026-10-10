@@ -11,27 +11,39 @@ class UpgradeModuleTest extends PHPUnit_Framework_TestCase
     {
         $module = new UpgradeModuleDouble();
         $this->assertTrue(upgrade_module_2_1_1($module));
-        $this->assertContains('categoryUpdate', $module->unregistered);
-        $this->assertContains('actionCategoryUpdate', $module->registered);
+        $expectedUnregistered = ['categoryUpdate'];
+        $expectedRegistered = ['actionCategoryUpdate'];
+        sort($expectedUnregistered);
+        sort($expectedRegistered);
+        $unregistered = $module->unregistered;
+        $registered = $module->registered;
+        sort($unregistered);
+        sort($registered);
+        $this->assertSame($expectedUnregistered, $unregistered);
+        $this->assertSame($expectedRegistered, $registered);
     }
 
     public function testUpgrade212MigratesProductHooks()
     {
         $module = new UpgradeModuleDouble();
         $this->assertTrue(upgrade_module_2_1_2($module));
-        $this->assertContains('addproduct', $module->unregistered);
-        $this->assertContains('updateproduct', $module->unregistered);
-        $this->assertContains('deleteproduct', $module->unregistered);
-        $this->assertContains('actionProductAdd', $module->registered);
-        $this->assertContains('actionProductUpdate', $module->registered);
-        $this->assertContains('actionProductDelete', $module->registered);
+        $expectedUnregistered = ['addproduct', 'deleteproduct', 'updateproduct'];
+        $expectedRegistered = ['actionProductAdd', 'actionProductDelete', 'actionProductUpdate'];
+        sort($expectedUnregistered);
+        sort($expectedRegistered);
+        $unregistered = $module->unregistered;
+        $registered = $module->registered;
+        sort($unregistered);
+        sort($registered);
+        $this->assertSame($expectedUnregistered, $unregistered);
+        $this->assertSame($expectedRegistered, $registered);
     }
 }
 
 class UpgradeModuleDouble
 {
-    public $registered = array();
-    public $unregistered = array();
+    public $registered = [];
+    public $unregistered = [];
 
     public function registerHook($name)
     {

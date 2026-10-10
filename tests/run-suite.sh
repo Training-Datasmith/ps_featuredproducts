@@ -9,6 +9,8 @@ EXPECTED_TEST_METHODS=52
 GATE_ASSERTIONS=""
 ARTIFACT="/opt/cursor/artifacts/suite-results.md"
 PHAR_HOST="/opt/phpunit-phar/phpunit-4.8.36.phar"
+GATE_TMPDIR="$(mktemp -d)"
+trap 'rm -rf "$GATE_TMPDIR"' EXIT
 
 TEST_FILE_LIST="
 Unit/DirectAccessGuardTest.php
@@ -28,11 +30,13 @@ select_php_image() {
     if docker pull --platform=linux/amd64 "$PHP54_IMAGE" >/dev/null 2>&1; then
         SELECTED_IMAGE="$PHP54_IMAGE"
         SELECTED_LABEL="php-5.4-cli"
+        PHP_PULL_NOTE="used PHP 5.4 digest image"
         return 0
     fi
     docker pull --platform=linux/amd64 "$PHP56_IMAGE" >/dev/null
     SELECTED_IMAGE="$PHP56_IMAGE"
     SELECTED_LABEL="php-5.6.40-cli"
+    PHP_PULL_NOTE="PHP 5.4 digest pull failed (schema v1 manifest); used PHP 5.6.40 fallback"
 }
 
 verify_inventory() {
@@ -48,12 +52,12 @@ write_temp_phpunit() {
     OUT_XML="$2"
     {
         echo '<?xml version="1.0" encoding="UTF-8"?>'
-        echo '<phpunit bootstrap="../bootstrap.php" colors="true">'
+        echo '<phpunit bootstrap="/src/tests/bootstrap.php" colors="true">'
         echo '  <testsuites>'
         echo '    <testsuite name="ps_featuredproducts">'
         while read -r rel; do
             test -n "$rel"
-            echo "      <file>../$rel</file>"
+            echo "      <file>/src/tests/$rel</file>"
         done < "$ORDER_FILE"
         echo '    </testsuite>'
         echo '  </testsuites>'
@@ -61,22 +65,35 @@ write_temp_phpunit() {
     } > "$OUT_XML"
 }
 
+make_seeded_order() {
+    docker run --rm --platform=linux/amd64 -i "$SELECTED_IMAGE" php -r '
+$files = array_filter(explode("\n", trim(stream_get_contents(STDIN))));
+srand(20261008);
+shuffle($files);
+echo implode("\n", $files), "\n";
+' < "$DEFAULT_ORDER"
+}
+
 run_phpunit_once() {
     ORDER_FILE="$1"
     RUN_LABEL="$2"
-    RUNTIME_DIR="$REPO_ROOT/tests/.runtime"
-    mkdir -p "$RUNTIME_DIR"
-    TMP_XML="$RUNTIME_DIR/gate-${RUN_LABEL}.xml"
+    TMP_XML="$GATE_TMPDIR/gate-${RUN_LABEL}.xml"
     write_temp_phpunit "$ORDER_FILE" "$TMP_XML"
-    REL_XML="tests/.runtime/gate-${RUN_LABEL}.xml"
+    set +e
     OUTPUT="$(docker run --rm --network=none \
         --platform=linux/amd64 \
-        -v "$REPO_ROOT":/src \
+        -v "$REPO_ROOT":/src:ro \
+        -v "$GATE_TMPDIR":/gate:ro \
         -v "$PHAR_HOST":/opt/phpunit.phar:ro \
-        -w /src/tests \
         "$SELECTED_IMAGE" \
-        php /opt/phpunit.phar --configuration "/src/$REL_XML" --colors=never)"
+        php /opt/phpunit.phar --configuration "/gate/gate-${RUN_LABEL}.xml" --colors=never 2>&1)"
+    PHPUNIT_STATUS=$?
+    set -e
     echo "$OUTPUT"
+    if [ "$PHPUNIT_STATUS" -ne 0 ]; then
+        echo "phpunit failed with status $PHPUNIT_STATUS" >&2
+        exit "$PHPUNIT_STATUS"
+    fi
     echo "$OUTPUT" | grep -E '^OK \([0-9]+ tests, [0-9]+ assertions\)$' >/dev/null
     COUNT="$(echo "$OUTPUT" | sed -n 's/^OK (\([0-9]*\) tests,.*/\1/p')"
     ASSERTIONS="$(echo "$OUTPUT" | sed -n 's/^OK ([0-9]* tests, \([0-9]*\) assertions)$/\1/p')"
@@ -117,18 +134,15 @@ Unit/PsFeaturedProductsWidgetTest.php
 Unit/PsFeaturedProductsGetProductsTest.php
 Unit/UpgradeModuleTest.php
 EOF
-SEEDED_ORDER="$(mktemp)"
-docker run --rm --platform=linux/amd64 -i "$SELECTED_IMAGE" php -r '
-$files = array_filter(explode("\n", trim(stream_get_contents(STDIN))));
-srand(20261008);
-shuffle($files);
-echo implode("\n", $files), "\n";
-' < "$DEFAULT_ORDER" > "$SEEDED_ORDER"
+SEEDED_ORDER_1="$(mktemp)"
+make_seeded_order > "$SEEDED_ORDER_1"
+SEEDED_ORDER_2="$(mktemp)"
+make_seeded_order > "$SEEDED_ORDER_2"
 
 run_phpunit_once "$DEFAULT_ORDER" "default-order-1"
 run_phpunit_once "$DEFAULT_ORDER" "default-order-2"
-run_phpunit_once "$SEEDED_ORDER" "seeded-order-1"
-run_phpunit_once "$SEEDED_ORDER" "seeded-order-2"
+run_phpunit_once "$SEEDED_ORDER_1" "seeded-order-1"
+run_phpunit_once "$SEEDED_ORDER_2" "seeded-order-2"
 
 BRANCH="$(git -C "$REPO_ROOT" rev-parse --abbrev-ref HEAD)"
 SHA="$(git -C "$REPO_ROOT" rev-parse HEAD)"
@@ -146,7 +160,7 @@ cat > "$ARTIFACT" <<EOF
 - phpunit: 4.8.36 (verified PHAR)
 - expected test files: $EXPECTED_TEST_FILES
 - expected test methods: $EXPECTED_TEST_METHODS
-- gate runs: default-order x2, seeded-order x2 (srand 20261008)
+- gate runs: default-order x2, seeded-order x2 (srand 20261008, fresh shuffle per seeded run)
 - command: tests/run-suite.sh
 - tests: $EXPECTED_TEST_METHODS
 - assertions: $GATE_ASSERTIONS
@@ -154,5 +168,5 @@ cat > "$ARTIFACT" <<EOF
 - errors: 0
 - skipped: 0
 - incomplete: 0
-- notes: PHP 5.4 digest pull failed (schema v1 manifest); used PHP 5.6.40 fallback; PHPUnit PHAR mounted read-only from /opt/phpunit-phar; widget-fix proof script tests reverted-line failure
+- notes: $PHP_PULL_NOTE; PHPUnit PHAR mounted read-only from /opt/phpunit-phar
 EOF

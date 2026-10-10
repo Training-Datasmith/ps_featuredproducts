@@ -4,17 +4,17 @@ class ModuleStub
 {
     public static $parentInstallResult = true;
     public static $hookFailOn = null;
-    public static $registeredHooks = array();
-    public static $clearCacheTemplates = array();
-    public static $unregisteredHooks = array();
+    public static $registeredHooks = [];
+    public static $clearCacheTemplates = [];
+    public static $unregisteredHooks = [];
 
     public static function reset()
     {
         self::$parentInstallResult = true;
         self::$hookFailOn = null;
-        self::$registeredHooks = array();
-        self::$clearCacheTemplates = array();
-        self::$unregisteredHooks = array();
+        self::$registeredHooks = [];
+        self::$clearCacheTemplates = [];
+        self::$unregisteredHooks = [];
     }
 }
 
@@ -79,7 +79,7 @@ class Module
         return 1;
     }
 
-    public function trans($string, $params = array(), $domain = null)
+    public function trans($string, $params = [], $domain = null)
     {
         return $string;
     }

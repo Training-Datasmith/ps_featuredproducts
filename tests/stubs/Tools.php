@@ -2,11 +2,11 @@
 
 class Tools
 {
-    private static $values = array();
+    private static $values = [];
 
     public static function reset()
     {
-        self::$values = array();
+        self::$values = [];
     }
 
     public static function setValues(array $values)

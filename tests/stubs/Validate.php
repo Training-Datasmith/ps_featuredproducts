@@ -9,6 +9,6 @@ class Validate
 
     public static function isInt($value)
     {
-        return ((string) (int) $value === (string) $value || $value === false);
+        return (string) (int) $value === (string) $value || $value === false;
     }
 }

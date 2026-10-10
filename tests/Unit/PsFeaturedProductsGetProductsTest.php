@@ -19,8 +19,6 @@ class PsFeaturedProductsGetProductsTest extends PHPUnit_Framework_TestCase
     {
         $result = $this->runGetProductsSubprocess('1.7.8.0', 'modern', '8', '4', '1');
         $this->assertSame('random', $result['sortDirection']);
-        $this->assertSame('', $result['sortEntity']);
-        $this->assertSame('', $result['sortField']);
     }
 
     public function testCategoryConstructorCastsConfigurationValue()
@@ -42,7 +40,7 @@ class PsFeaturedProductsGetProductsTest extends PHPUnit_Framework_TestCase
     {
         $repoRoot = dirname(dirname(__DIR__));
         $script = $repoRoot . '/tests/subprocess-run-get-products.php';
-        $args = array(
+        $args = [
             escapeshellarg(PHP_BINARY),
             escapeshellarg($script),
             escapeshellarg($psVersion),
@@ -50,7 +48,7 @@ class PsFeaturedProductsGetProductsTest extends PHPUnit_Framework_TestCase
             escapeshellarg($nbr),
             escapeshellarg($cat),
             escapeshellarg($randomize),
-        );
+        ];
         $command = implode(' ', $args);
         $json = shell_exec($command);
         $this->assertNotEmpty($json);

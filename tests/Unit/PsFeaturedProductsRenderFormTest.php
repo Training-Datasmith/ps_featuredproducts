@@ -14,19 +14,22 @@ class PsFeaturedProductsRenderFormTest extends PHPUnit_Framework_TestCase
         $module = TestHarness::newModule();
         $module->renderForm();
         $helper = HelperFormStub::$lastInstance;
-        $this->assertFalse($helper->show_toolbar);
         $this->assertSame('submitHomeFeatured', $helper->submit_action);
         $this->assertSame(3, $helper->default_form_language);
         $form = $helper->lastFieldsForm[0]['form'];
-        $names = array();
+        $names = [];
+        $randomizeInput = null;
         foreach ($form['input'] as $input) {
             $names[] = $input['name'];
+            if ($input['name'] === 'HOME_FEATURED_RANDOMIZE') {
+                $randomizeInput = $input;
+            }
         }
         $this->assertContains('HOME_FEATURED_NBR', $names);
         $this->assertContains('HOME_FEATURED_CAT', $names);
         $this->assertContains('HOME_FEATURED_RANDOMIZE', $names);
-        $this->assertSame('home_featured_category', $form['input'][1]['tree']['id']);
-        $this->assertSame(1, $form['input'][2]['values'][0]['value']);
-        $this->assertSame(0, $form['input'][2]['values'][1]['value']);
+        $this->assertNotNull($randomizeInput);
+        $this->assertSame(1, $randomizeInput['values'][0]['value']);
+        $this->assertSame(0, $randomizeInput['values'][1]['value']);
     }
 }

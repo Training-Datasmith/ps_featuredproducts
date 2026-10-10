@@ -2,7 +2,7 @@
 
 class DirectAccessGuardTest extends PHPUnit_Framework_TestCase
 {
-    private static $guardFiles = array(
+    private static $guardFiles = [
         'index.php',
         'translations/index.php',
         'views/index.php',
@@ -14,7 +14,7 @@ class DirectAccessGuardTest extends PHPUnit_Framework_TestCase
         'ps_featuredproducts.php',
         'upgrade/upgrade-2.1.1.php',
         'upgrade/upgrade-2.1.2.php',
-    );
+    ];
 
     /**
      * @dataProvider guardFileProvider
@@ -26,7 +26,11 @@ class DirectAccessGuardTest extends PHPUnit_Framework_TestCase
         $wrapper = $repoRoot . '/tests/include-wrapper.php';
         $php = PHP_BINARY;
         $command = escapeshellarg($php) . ' ' . escapeshellarg($wrapper) . ' ' . escapeshellarg($target);
-        $output = shell_exec($command);
+        $lines = [];
+        $status = 0;
+        exec($command . ' 2>&1', $lines, $status);
+        $output = implode("\n", $lines);
+        $this->assertSame(0, $status);
         $this->assertContains('PS_FEATUREDPRODUCTS_SENTINEL_BEFORE', $output);
         $this->assertNotContains('PS_FEATUREDPRODUCTS_SENTINEL_AFTER', $output);
     }
@@ -49,9 +53,9 @@ class DirectAccessGuardTest extends PHPUnit_Framework_TestCase
 
     public function guardFileProvider()
     {
-        $rows = array();
+        $rows = [];
         foreach (self::$guardFiles as $path) {
-            $rows[] = array($path);
+            $rows[] = [$path];
         }
 
         return $rows;
@@ -59,11 +63,11 @@ class DirectAccessGuardTest extends PHPUnit_Framework_TestCase
 
     public function versionGuardProvider()
     {
-        return array(
-            array('ps_featuredproducts.php', 'class_exists(\'Ps_FeaturedProducts\')'),
-            array('upgrade/upgrade-2.1.1.php', 'function_exists(\'upgrade_module_2_1_1\')'),
-            array('upgrade/upgrade-2.1.2.php', 'function_exists(\'upgrade_module_2_1_2\')'),
-        );
+        return [
+            ['ps_featuredproducts.php', 'class_exists(\'Ps_FeaturedProducts\')'],
+            ['upgrade/upgrade-2.1.1.php', 'function_exists(\'upgrade_module_2_1_1\')'],
+            ['upgrade/upgrade-2.1.2.php', 'function_exists(\'upgrade_module_2_1_2\')'],
+        ];
     }
 
     private function buildGuardBootstrapScript($target, $symbolCheck)

@@ -15,7 +15,7 @@ class PsFeaturedProductsCacheHooksTest extends PHPUnit_Framework_TestCase
     public function testCacheHooksClearModuleTemplate($method)
     {
         $module = TestHarness::newModule();
-        $module->$method(array());
+        $module->$method([]);
         $this->assertContains(self::$template, ModuleStub::$clearCacheTemplates);
     }
 
@@ -28,12 +28,12 @@ class PsFeaturedProductsCacheHooksTest extends PHPUnit_Framework_TestCase
 
     public function cacheHookProvider()
     {
-        return array(
-            array('hookActionProductAdd'),
-            array('hookActionProductUpdate'),
-            array('hookActionProductDelete'),
-            array('hookActionCategoryUpdate'),
-            array('hookActionAdminGroupsControllerSaveAfter'),
-        );
+        return [
+            ['hookActionProductAdd'],
+            ['hookActionProductUpdate'],
+            ['hookActionProductDelete'],
+            ['hookActionCategoryUpdate'],
+            ['hookActionAdminGroupsControllerSaveAfter'],
+        ];
     }
 }

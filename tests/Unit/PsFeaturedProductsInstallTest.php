@@ -2,7 +2,7 @@
 
 class PsFeaturedProductsInstallTest extends PHPUnit_Framework_TestCase
 {
-    private static $expectedHooks = array(
+    private static $expectedHooks = [
         'actionProductAdd',
         'actionProductUpdate',
         'actionProductDelete',
@@ -10,7 +10,7 @@ class PsFeaturedProductsInstallTest extends PHPUnit_Framework_TestCase
         'displayOrderConfirmation2',
         'actionCategoryUpdate',
         'actionAdminGroupsControllerSaveAfter',
-    );
+    ];
 
     protected function setUp()
     {
@@ -32,7 +32,7 @@ class PsFeaturedProductsInstallTest extends PHPUnit_Framework_TestCase
         ModuleStub::$parentInstallResult = false;
         $module = TestHarness::newModule();
         $this->assertFalse($module->install());
-        $this->assertSame(array(), ModuleStub::$registeredHooks);
+        $this->assertSame([], ModuleStub::$registeredHooks);
     }
 
     /**
@@ -57,9 +57,9 @@ class PsFeaturedProductsInstallTest extends PHPUnit_Framework_TestCase
 
     public function hookFailureProvider()
     {
-        $rows = array();
+        $rows = [];
         foreach (self::$expectedHooks as $hook) {
-            $rows[] = array($hook);
+            $rows[] = [$hook];
         }
 
         return $rows;

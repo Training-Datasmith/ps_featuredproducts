@@ -20,7 +20,7 @@ $method->invoke($module);
 $query = \PrestaShop\PrestaShop\Adapter\Category\CategoryProductSearchProvider::$lastQuery;
 $sort = $query->getSortOrder();
 
-echo json_encode(array(
+echo json_encode([
     'resultsPerPage' => $query->getResultsPerPage(),
     'page' => $query->getPage(),
     'sortEntity' => $sort->getEntity(),
@@ -31,4 +31,4 @@ echo json_encode(array(
     'adapterPresenterCount' => \PrestaShop\PrestaShop\Adapter\Presenter\Product\ProductListingPresenter::$presentCount,
     'assembleProductsCalls' => ProductAssemblerStub::$assembleProductsCalls,
     'assembleProductCalls' => ProductAssemblerStub::$assembleProductCalls,
-));
+]);
