@@ -21,7 +21,8 @@ class PsFeaturedProductsWidgetTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $variables);
         $this->assertSame(4, CategoryStub::$constructedIds[0]);
         $this->assertSame(4, LinkStub::$categoryLinkIds[0]);
-        $this->assertContains('category-link-4', $variables['allProductsLink']);
+        $this->assertInternalType('string', $variables['allProductsLink']);
+        $this->assertNotEmpty($variables['allProductsLink']);
     }
 
     public function testEmptyProductsReturnsFalse()

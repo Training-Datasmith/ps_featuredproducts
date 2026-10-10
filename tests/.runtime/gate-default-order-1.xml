@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="../bootstrap.php" colors="true">
+  <testsuites>
+    <testsuite name="ps_featuredproducts">
+      <file>../Unit/DirectAccessGuardTest.php</file>
+      <file>../Unit/PsFeaturedProductsConstructorTest.php</file>
+      <file>../Unit/ConfigXmlTest.php</file>
+      <file>../Unit/TemplateContractTest.php</file>
+      <file>../Unit/PsFeaturedProductsInstallTest.php</file>
+      <file>../Unit/PsFeaturedProductsCacheHooksTest.php</file>
+      <file>../Unit/PsFeaturedProductsGetContentTest.php</file>
+      <file>../Unit/PsFeaturedProductsRenderFormTest.php</file>
+      <file>../Unit/PsFeaturedProductsWidgetTest.php</file>
+      <file>../Unit/PsFeaturedProductsGetProductsTest.php</file>
+      <file>../Unit/UpgradeModuleTest.php</file>
+    </testsuite>
+  </testsuites>
+</phpunit>

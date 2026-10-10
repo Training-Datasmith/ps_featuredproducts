@@ -13,10 +13,12 @@ class PsFeaturedProductsGetContentTest extends PHPUnit_Framework_TestCase
     public function testGetContentWithoutSubmitDoesNotWriteConfiguration()
     {
         $module = TestHarness::newModule();
-        $module->getContent();
-        $this->assertSame(8, (int) Configuration::get('HOME_FEATURED_NBR'));
-        $this->assertSame(5, (int) Configuration::get('HOME_FEATURED_CAT'));
-        $this->assertSame(false, (bool) Configuration::get('HOME_FEATURED_RANDOMIZE'));
+        $output = $module->getContent();
+        $this->assertNotContains('ERROR:', $output);
+        $this->assertNotContains('OK:', $output);
+        $this->assertSame(8, Configuration::get('HOME_FEATURED_NBR'));
+        $this->assertSame(5, Configuration::get('HOME_FEATURED_CAT'));
+        $this->assertSame(false, Configuration::get('HOME_FEATURED_RANDOMIZE'));
     }
 
     /**
@@ -33,7 +35,7 @@ class PsFeaturedProductsGetContentTest extends PHPUnit_Framework_TestCase
         $module = TestHarness::newModule();
         $output = $module->getContent();
         $this->assertContains('ERROR:', $output);
-        $this->assertSame(8, (int) Configuration::get('HOME_FEATURED_NBR'));
+        $this->assertSame(8, Configuration::get('HOME_FEATURED_NBR'));
     }
 
     public function testInvalidCategoryIsRejected()
@@ -47,7 +49,7 @@ class PsFeaturedProductsGetContentTest extends PHPUnit_Framework_TestCase
         $module = TestHarness::newModule();
         $output = $module->getContent();
         $this->assertContains('ERROR:', $output);
-        $this->assertSame(5, (int) Configuration::get('HOME_FEATURED_CAT'));
+        $this->assertSame(5, Configuration::get('HOME_FEATURED_CAT'));
     }
 
     public function testInvalidRandomizeFlagIsRejected()
@@ -61,7 +63,7 @@ class PsFeaturedProductsGetContentTest extends PHPUnit_Framework_TestCase
         $module = TestHarness::newModule();
         $output = $module->getContent();
         $this->assertContains('ERROR:', $output);
-        $this->assertSame(false, (bool) Configuration::get('HOME_FEATURED_RANDOMIZE'));
+        $this->assertSame(false, Configuration::get('HOME_FEATURED_RANDOMIZE'));
     }
 
     public function testValidSubmitPersistsCastConfigurationValues()

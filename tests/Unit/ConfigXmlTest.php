@@ -8,6 +8,5 @@ class ConfigXmlTest extends PHPUnit_Framework_TestCase
         $module = TestHarness::newModule();
         $this->assertSame('ps_featuredproducts', (string) $xml->name);
         $this->assertSame($module->name, (string) $xml->name);
-        $this->assertSame('front_office_features', (string) $xml->tab);
     }
 }

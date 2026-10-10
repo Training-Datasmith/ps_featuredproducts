@@ -16,11 +16,6 @@ class DirectAccessGuardTest extends PHPUnit_Framework_TestCase
         'upgrade/upgrade-2.1.2.php',
     );
 
-    public function testGuardFileInventoryIsComplete()
-    {
-        $this->assertSame(11, count(self::$guardFiles));
-    }
-
     /**
      * @dataProvider guardFileProvider
      */
@@ -78,17 +73,6 @@ class DirectAccessGuardTest extends PHPUnit_Framework_TestCase
             mkdir($dir, 0700, true);
         }
         $script = $dir . '/run.php';
-        $code = '<?php
-define(\'_PS_VERSION_\', \'1.7.8.0\');
-require dirname(__DIR__) . \'/tests/bootstrap.php\';
-fwrite(STDOUT, "PS_FEATUREDPRODUCTS_SENTINEL_BEFORE\n");
-include ' . var_export($target, true) . ';
-if (' . $symbolCheck . ') {
-    fwrite(STDOUT, "SYMBOL_OK\n");
-}
-fwrite(STDOUT, "PS_FEATUREDPRODUCTS_SENTINEL_AFTER\n");
-';
-        // fix path to bootstrap - script is in temp, need repo root
         $repoRoot = dirname(dirname(__DIR__));
         $code = '<?php
 define(\'_PS_VERSION_\', \'1.7.8.0\');

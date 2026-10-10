@@ -21,9 +21,9 @@ class PsFeaturedProductsInstallTest extends PHPUnit_Framework_TestCase
     {
         $module = TestHarness::newModule();
         $this->assertTrue($module->install());
-        $this->assertSame(8, (int) Configuration::get('HOME_FEATURED_NBR'));
-        $this->assertSame(42, (int) Configuration::get('HOME_FEATURED_CAT'));
-        $this->assertSame(false, (bool) Configuration::get('HOME_FEATURED_RANDOMIZE'));
+        $this->assertSame(8, Configuration::get('HOME_FEATURED_NBR'));
+        $this->assertSame(42, Configuration::get('HOME_FEATURED_CAT'));
+        $this->assertSame(false, Configuration::get('HOME_FEATURED_RANDOMIZE'));
         $this->assertHookMembership(ModuleStub::$registeredHooks);
     }
 
