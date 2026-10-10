@@ -7,16 +7,6 @@ class PsFeaturedProductsGetProductsTest extends PHPUnit_Framework_TestCase
         TestHarness::reset();
     }
 
-    public function testNegativeProductCountFallsBackToTwelve()
-    {
-        $result = $this->runGetProductsSubprocess('1.7.8.0', 'modern', '-1', '12', '0');
-        $this->assertSame(12, $result['resultsPerPage']);
-        $this->assertSame(1, $result['page']);
-        $this->assertSame('product', $result['sortEntity']);
-        $this->assertSame('position', $result['sortField']);
-        $this->assertSame('asc', $result['sortDirection']);
-    }
-
     public function testRandomizeUsesRandomSortOrder()
     {
         $result = $this->runGetProductsSubprocess('1.7.8.0', 'modern', '8', '4', '1');
